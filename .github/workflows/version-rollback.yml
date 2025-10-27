@@ -1,0 +1,396 @@
+name: 🔄 版本回滚系统
+
+on:
+  workflow_dispatch:
+    inputs:
+      rollback_type:
+        description: '回滚方式'
+        required: true
+        type: choice
+        options:
+          - by-commit
+          - by-tag
+        default: by-commit
+      commit_sha:
+        description: '[按提交] 要回滚到的提交 SHA（完整或短 SHA）'
+        required: false
+        type: string
+      target_tag:
+        description: '[按标签] 要回滚到的版本标签 (例如: v1.0.0)'
+        required: false
+        type: string
+      target_branch:
+        description: '要回滚的目标分支'
+        required: true
+        type: string
+        default: 'main'
+      rollback_version:
+        description: '新回滚版本号 (留空则自动生成，仅标签回滚时使用)'
+        required: false
+        type: string
+        default: ''
+      rollback_reason:
+        description: '回滚原因说明'
+        required: false
+        type: string
+        default: ''
+      rollback_method:
+        description: '回滚执行方式'
+        required: true
+        type: choice
+        options:
+          - revert
+          - force-reset
+        default: revert
+      preserve_workflows:
+        description: '保留 .github/workflows 目录'
+        required: false
+        type: boolean
+        default: true
+      create_release:
+        description: '创建 GitHub Release 记录'
+        required: false
+        type: choice
+        options:
+          - auto
+          - 'true'
+          - 'false'
+        default: auto
+      dry_run:
+        description: 'Dry-run 预览（不推送）'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  rollback:
+    name: 执行版本回滚
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.inputs.target_branch }}
+          token: ${{ secrets.PAT_WITH_WORKFLOW }}
+
+      - name: Configure Git
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+      - name: Compute create_release flag
+        id: release_flag
+        run: |
+          if [ "${{ github.event.inputs.create_release }}" = "auto" ]; then
+            case "${{ github.event.inputs.rollback_type }}" in
+              by-commit) echo "val=false" >> $GITHUB_OUTPUT ;;
+              by-tag)    echo "val=true"  >> $GITHUB_OUTPUT ;;
+            esac
+          else
+            echo "val=${{ github.event.inputs.create_release }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Validate and resolve target
+        id: validate
+        run: |
+          set -euo pipefail
+          ROLLBACK_TYPE="${{ github.event.inputs.rollback_type }}"
+
+          if [ "$ROLLBACK_TYPE" = "by-commit" ]; then
+            COMMIT_SHA="${{ github.event.inputs.commit_sha }}"
+            [ -z "$COMMIT_SHA" ] && { echo "错误: 按提交回滚时必须提供 commit_sha!"; exit 1; }
+            if ! TARGET_COMMIT=$(git rev-parse --verify --quiet "$COMMIT_SHA^{commit}"); then
+              echo "错误: 无法解析提交 $COMMIT_SHA"; exit 1
+            fi
+            if ! git merge-base --is-ancestor "$TARGET_COMMIT" "origin/${{ github.event.inputs.target_branch }}" 2>/dev/null; then
+              echo "⚠️  警告: 目标提交不在分支 ${{ github.event.inputs.target_branch }} 的历史中"
+            fi
+            echo "回滚目标: 提交 $COMMIT_SHA"
+            echo "target_type=commit" >> $GITHUB_OUTPUT
+            echo "target_ref=$COMMIT_SHA" >> $GITHUB_OUTPUT
+          elif [ "$ROLLBACK_TYPE" = "by-tag" ]; then
+            TARGET_TAG="${{ github.event.inputs.target_tag }}"
+            [ -z "$TARGET_TAG" ] && { echo "错误: 按标签回滚时必须提供 target_tag!"; exit 1; }
+            if ! git rev-parse "$TARGET_TAG" >/dev/null 2>&1; then
+              echo "错误: 标签 $TARGET_TAG 不存在!"
+              echo "可用的标签列表:"; git tag --sort=-version:refname | head -20; exit 1
+            fi
+            TARGET_COMMIT=$(git rev-parse "$TARGET_TAG")
+            echo "回滚目标: 标签 $TARGET_TAG"
+            echo "target_type=tag" >> $GITHUB_OUTPUT
+            echo "target_ref=$TARGET_TAG" >> $GITHUB_OUTPUT
+          fi
+
+          echo "target_commit=$TARGET_COMMIT" >> $GITHUB_OUTPUT
+          echo "目标提交: $TARGET_COMMIT"
+          git show -s --format='提交: %H%n日期: %cI%n作者: %an%n信息: %s' "$TARGET_COMMIT"
+          CURRENT_COMMIT=$(git rev-parse HEAD)
+          echo "current_commit=$CURRENT_COMMIT" >> $GITHUB_OUTPUT
+          echo "当前提交: $CURRENT_COMMIT"
+          if [ "$TARGET_COMMIT" = "$CURRENT_COMMIT" ]; then
+            echo "⚠️  警告: 目标提交与当前分支状态一致，无需回滚"
+            echo "needs_rollback=false" >> $GITHUB_OUTPUT
+          else
+            echo "needs_rollback=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Determine rollback version tag
+        if: ${{ steps.validate.outputs.target_type == 'tag' && steps.validate.outputs.needs_rollback == 'true' }}
+        id: version
+        run: |
+          if [ -n "${{ github.event.inputs.rollback_version }}" ]; then
+            ROLLBACK_TAG="${{ github.event.inputs.rollback_version }}"
+            if [[ ! "$ROLLBACK_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9\.]+)?$ ]]; then
+              echo "错误: 版本标签格式不正确!"; exit 1
+            fi
+          else
+            LATEST_TAG=$(git tag --sort=-version:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+' | head -n 1)
+            if [ -z "$LATEST_TAG" ]; then
+              ROLLBACK_TAG="v1.0.0-rollback"
+            else
+              VERSION=${LATEST_TAG#v}; VERSION=${VERSION%%-*}
+              IFS=. read -r MAJOR MINOR PATCH <<< "$VERSION"
+              PATCH=$((PATCH + 1))
+              ROLLBACK_TAG="v${MAJOR}.${MINOR}.${PATCH}-rollback"
+            fi
+          fi
+          if git rev-parse "$ROLLBACK_TAG" >/dev/null 2>&1; then
+            echo "错误: 回滚版本标签 $ROLLBACK_TAG 已存在!"; exit 1
+          fi
+          echo "回滚版本标签: $ROLLBACK_TAG"
+          echo "rollback_tag=$ROLLBACK_TAG" >> $GITHUB_OUTPUT
+
+      - name: Get Beijing time
+        id: time
+        run: |
+          BEIJING_TIME=$(TZ="Asia/Shanghai" date +'%Y-%m-%d %H:%M:%S %Z')
+          echo "beijing_time=$BEIJING_TIME" >> $GITHUB_OUTPUT
+
+      - name: Backup workflows
+        if: ${{ steps.validate.outputs.needs_rollback == 'true' && github.event.inputs.preserve_workflows == 'true' }}
+        run: |
+          echo "备份当前工作流文件..."
+          mkdir -p /tmp/workflows_backup
+          [ -d ".github/workflows" ] && cp -r .github/workflows/* /tmp/workflows_backup/ 2>/dev/null || true
+          echo "工作流文件已备份到 /tmp/workflows_backup"
+          ls -la /tmp/workflows_backup || true
+
+      - name: Restore workflows
+        if: ${{ steps.validate.outputs.needs_rollback == 'true' && github.event.inputs.preserve_workflows == 'true' && github.event.inputs.dry_run != 'true' }}
+        run: |
+          if [ -d "/tmp/workflows_backup" ] && [ -n "$(ls -A /tmp/workflows_backup 2>/dev/null)" ]; then
+            echo "恢复工作流文件..."
+            mkdir -p .github/workflows
+            cp -r /tmp/workflows_backup/* .github/workflows/ 2>/dev/null || true
+
+            # 如果复制后工作区无变化，直接退出
+            if git diff --quiet && git diff --cached --quiet; then
+              echo "工作流文件与回滚后版本一致，无需再提交。"
+              exit 0
+            fi
+
+            git add .github/workflows
+            if [ "${{ github.event.inputs.rollback_method }}" = "revert" ]; then
+              git commit --amend --no-edit \
+                -m "$(git log -1 --pretty=%B)" \
+                -m "" \
+                -m "注: 已保留 .github/workflows 目录中的工作流文件"
+            else
+              git commit -m "保留工作流文件" \
+                -m "回滚到 ${{ steps.validate.outputs.target_ref }} 时保留了 .github/workflows 目录"
+            fi
+            echo "✅ 工作流文件已恢复并保留"
+          else
+            echo "没有工作流文件需要恢复"
+          fi
+
+      - name: Perform rollback (Revert method)
+        if: ${{ steps.validate.outputs.needs_rollback == 'true' && github.event.inputs.rollback_method == 'revert' && github.event.inputs.dry_run != 'true' }}
+        run: |
+          echo "使用 revert 方式回滚"
+          TARGET_COMMIT="${{ steps.validate.outputs.target_commit }}"
+          COMMITS_TO_REVERT=$(git rev-list $TARGET_COMMIT..HEAD)
+          COMMIT_COUNT=$(echo "$COMMITS_TO_REVERT" | wc -l)
+          echo "需要 revert $COMMIT_COUNT 个提交"
+          if [ "$COMMIT_COUNT" -eq 0 ]; then exit 0; fi
+          cat > /tmp/rollback_message.txt <<EOF
+          🔄 Rollback to ${{ steps.validate.outputs.target_ref }}
+
+          回滚方式: ${{ github.event.inputs.rollback_type }}
+          回滚原因: ${{ github.event.inputs.rollback_reason }}
+          目标引用: ${{ steps.validate.outputs.target_ref }}
+          回滚提交: ${{ steps.validate.outputs.target_commit }}
+          回滚时间: ${{ steps.time.outputs.beijing_time }}
+          执行方法: Revert commits
+
+          本次回滚通过 revert $COMMIT_COUNT 个提交实现，保留完整历史记录。
+          EOF
+          if [ "$COMMIT_COUNT" -le 20 ]; then
+            for commit in $COMMITS_TO_REVERT; do
+              if ! git revert --no-commit $commit; then
+                git revert --abort || true
+                git revert --no-commit -X theirs $commit || { echo "❌ 无法自动解决冲突"; exit 1; }
+              fi
+            done
+            git commit -F /tmp/rollback_message.txt
+          else
+            git reset --soft $TARGET_COMMIT
+            git commit -F /tmp/rollback_message.txt
+          fi
+
+      - name: Perform rollback (Force reset method)
+        if: ${{ steps.validate.outputs.needs_rollback == 'true' && github.event.inputs.rollback_method == 'force-reset' && github.event.inputs.dry_run != 'true' }}
+        run: |
+          echo "⚠️  使用强制重置方式回滚"
+          echo "这将重写分支历史!"
+          TARGET_COMMIT="${{ steps.validate.outputs.target_commit }}"
+          git reset --hard $TARGET_COMMIT
+
+      - name: Push changes
+        if: ${{ steps.validate.outputs.needs_rollback == 'true' && github.event.inputs.dry_run != 'true' }}
+        run: |
+          if [ "${{ github.event.inputs.rollback_method }}" = "force-reset" ]; then
+            git push --force-with-lease origin ${{ github.event.inputs.target_branch }}
+          else
+            git push origin ${{ github.event.inputs.target_branch }}
+          fi
+
+      - name: Create rollback tag
+        if: ${{ steps.validate.outputs.needs_rollback == 'true' && steps.validate.outputs.target_type == 'tag' && steps.release_flag.outputs.val == 'true' && github.event.inputs.dry_run != 'true' }}
+        run: |
+          ROLLBACK_TAG="${{ steps.version.outputs.rollback_tag }}"
+          git tag -a "$ROLLBACK_TAG" \
+            -m "Rollback to ${{ steps.validate.outputs.target_ref }}" \
+            -m "Reason: ${{ github.event.inputs.rollback_reason }}" \
+            -m "Time: ${{ steps.time.outputs.beijing_time }}"
+          git push origin "$ROLLBACK_TAG"
+          echo "✅ 已创建回滚标签: $ROLLBACK_TAG"
+
+      - name: Generate rollback changelog
+        if: ${{ steps.validate.outputs.needs_rollback == 'true' && steps.release_flag.outputs.val == 'true' }}
+        run: |
+          echo "## 🔄 版本回滚" > ROLLBACK.md
+          echo "" >> ROLLBACK.md
+          if [ "${{ steps.validate.outputs.target_type }}" = "tag" ]; then
+            echo "**回滚版本:** ${{ steps.version.outputs.rollback_tag }}" >> ROLLBACK.md
+          fi
+          echo "**回滚方式:** ${{ github.event.inputs.rollback_type }}" >> ROLLBACK.md
+          echo "**回滚目标:** ${{ steps.validate.outputs.target_ref }}" >> ROLLBACK.md
+          echo "**目标分支:** ${{ github.event.inputs.target_branch }}" >> ROLLBACK.md
+          echo "**回滚时间:** ${{ steps.time.outputs.beijing_time }}" >> ROLLBACK.md
+          echo "**回滚提交:** ${{ steps.validate.outputs.target_commit }}" >> ROLLBACK.md
+          echo "**执行方法:** ${{ github.event.inputs.rollback_method }}" >> ROLLBACK.md
+          echo "" >> ROLLBACK.md
+          echo "### 回滚原因" >> ROLLBACK.md
+          echo "" >> ROLLBACK.md
+          echo "${{ github.event.inputs.rollback_reason }}" >> ROLLBACK.md
+          echo "" >> ROLLBACK.md
+          echo "---" >> ROLLBACK.md
+          echo "" >> ROLLBACK.md
+          echo "### ✅ 回滚已完成" >> ROLLBACK.md
+          echo "" >> ROLLBACK.md
+          echo "代码已成功回滚到指定版本。" >> ROLLBACK.md
+          echo "分支 \`${{ github.event.inputs.target_branch }}\` 现在的代码状态与目标版本完全一致。" >> ROLLBACK.md
+          if [ "${{ github.event.inputs.preserve_workflows }}" = "true" ]; then
+            echo "" >> ROLLBACK.md
+            echo "⚠️ **注意**: 已保留 \`.github/workflows\` 目录，工作流文件不受回滚影响。" >> ROLLBACK.md
+          fi
+          echo "" >> ROLLBACK.md
+          echo "---" >> ROLLBACK.md
+          echo "" >> ROLLBACK.md
+          echo "### 目标版本信息" >> ROLLBACK.md
+          echo "" >> ROLLBACK.md
+          git show ${{ steps.validate.outputs.target_commit }} --no-patch --format="* **提交:** %H%n* **提交日期:** %ci%n* **提交者:** %an%n* **提交信息:** %s" >> ROLLBACK.md
+          echo "" >> ROLLBACK.md
+          echo "---" >> ROLLBACK.md
+          echo "" >> ROLLBACK.md
+          echo "### 📝 已回滚的变更" >> ROLLBACK.md
+          echo "" >> ROLLBACK.md
+          COMMIT_COUNT=$(git rev-list --count ${{ steps.validate.outputs.target_commit }}..${{ steps.validate.outputs.current_commit }} 2>/dev/null || echo "0")
+          if [ "$COMMIT_COUNT" -gt 0 ]; then
+            echo "以下 $COMMIT_COUNT 次提交已被回滚:" >> ROLLBACK.md
+            echo "" >> ROLLBACK.md
+            if [ "$COMMIT_COUNT" -gt 50 ]; then
+              git log --oneline --pretty="format:* %s (%h)" ${{ steps.validate.outputs.target_commit }}..${{ steps.validate.outputs.current_commit }} -n 50 >> ROLLBACK.md
+              echo "" >> ROLLBACK.md
+              echo "*注: 仅显示最近50次提交，总计 $COMMIT_COUNT 次变更已被回滚。*" >> ROLLBACK.md
+            else
+              git log --oneline --pretty="format:* %s (%h)" ${{ steps.validate.outputs.target_commit }}..${{ steps.validate.outputs.current_commit }} >> ROLLBACK.md
+            fi
+          fi
+
+      - name: Create GitHub Release
+        if: ${{ steps.validate.outputs.needs_rollback == 'true' && steps.validate.outputs.target_type == 'tag' && steps.release_flag.outputs.val == 'true' && github.event.inputs.dry_run != 'true' }}
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.rollback_tag }}
+          name: "🔄 Rollback to ${{ steps.validate.outputs.target_ref }}"
+          body_path: ROLLBACK.md
+          files: ROLLBACK.md
+          prerelease: false
+          generate_release_notes: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_WITH_WORKFLOW }}
+
+      - name: Dry-run preview
+        if: ${{ github.event.inputs.dry_run == 'true' }}
+        run: |
+          echo "=========================================="
+          echo "🔍 DRY-RUN 预览模式"
+          echo "=========================================="
+          echo ""
+          echo "回滚方式: ${{ github.event.inputs.rollback_type }}"
+          echo "回滚目标: ${{ steps.validate.outputs.target_ref }}"
+          echo "目标分支: ${{ github.event.inputs.target_branch }}"
+          echo "执行方法: ${{ github.event.inputs.rollback_method }}"
+          echo "保留工作流: ${{ github.event.inputs.preserve_workflows }}"
+          echo "创建Release: ${{ steps.release_flag.outputs.val }}"
+          echo ""
+          echo "目标提交信息:"
+          git show -s --format='  提交: %H%n  日期: %cI%n  作者: %an%n  信息: %s' "${{ steps.validate.outputs.target_commit }}"
+          echo ""
+          if [ "${{ steps.validate.outputs.needs_rollback }}" = "true" ]; then
+            COMMIT_COUNT=$(git rev-list --count ${{ steps.validate.outputs.target_commit }}..HEAD 2>/dev/null || echo "0")
+            echo "将回滚 $COMMIT_COUNT 个提交"
+            echo ""
+            echo "[DRY-RUN] 未执行任何更改，请取消 dry_run 以执行实际回滚"
+          else
+            echo "⚠️  目标提交与当前状态一致，无需回滚"
+          fi
+          echo "=========================================="
+
+      - name: Show rollback summary
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        run: |
+          echo "=========================================="
+          if [ "${{ steps.validate.outputs.needs_rollback }}" = "true" ]; then
+            echo "✅ 回滚已成功完成!"
+          else
+            echo "ℹ️  无需回滚（目标版本与当前状态一致）"
+          fi
+          echo "=========================================="
+          echo "回滚方式: ${{ github.event.inputs.rollback_type }}"
+          echo "回滚目标: ${{ steps.validate.outputs.target_ref }}"
+          echo "目标分支: ${{ github.event.inputs.target_branch }}"
+          echo "目标提交: ${{ steps.validate.outputs.target_commit }}"
+          echo "执行方法: ${{ github.event.inputs.rollback_method }}"
+          echo "保留工作流: ${{ github.event.inputs.preserve_workflows }}"
+          if [ "${{ steps.validate.outputs.target_type }}" = "tag" ] && [ "${{ steps.release_flag.outputs.val }}" = "true" ]; then
+            echo "回滚版本: ${{ steps.version.outputs.rollback_tag }}"
+          fi
+          echo "北京时间: ${{ steps.time.outputs.beijing_time }}"
+          echo "=========================================="
+          if [ "${{ steps.validate.outputs.needs_rollback }}" = "true" ]; then
+            echo ""
+            echo "✅ 代码已回滚完成"
+            echo "分支 ${{ github.event.inputs.target_branch }} 现在的代码状态已恢复到目标版本"
+            if [ "${{ github.event.inputs.preserve_workflows }}" = "true" ]; then
+              echo ""
+              echo "⚠️  工作流文件已保留在最新版本，不受回滚影响"
+            fi
+          fi
+          echo "=========================================="
