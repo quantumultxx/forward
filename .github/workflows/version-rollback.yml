@@ -62,12 +62,17 @@ on:
         type: boolean
         default: false
 
+  schedule:
+    # 每月 1 号 02:30 UTC（北京时间 10:30）
+    - cron: '30 2 1 * *'
+
 permissions:
   contents: write
 
 jobs:
   rollback:
     name: 执行版本回滚
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -187,7 +192,6 @@ jobs:
             mkdir -p .github/workflows
             cp -r /tmp/workflows_backup/* .github/workflows/ 2>/dev/null || true
 
-            # 如果复制后工作区无变化，直接退出
             if git diff --quiet && git diff --cached --quiet; then
               echo "工作流文件与回滚后版本一致，无需再提交。"
               exit 0
@@ -394,3 +398,26 @@ jobs:
             fi
           fi
           echo "=========================================="
+
+  monthly-empty-commit:
+    name: 月度空提交（保活）
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT_WITH_WORKFLOW }}
+          ref: main
+
+      - name: Configure Git
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+      - name: Create empty commit
+        run: |
+          git commit --allow-empty -m "chore: monthly empty commit to keep repo active [skip ci]"
+          git push origin main
