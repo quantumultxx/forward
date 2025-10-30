@@ -4,15 +4,16 @@ on:
   workflow_dispatch:
     inputs:
       rollback_type:
-        description: '回滚方式'
+        description: '执行模式'
         required: true
         type: choice
         options:
           - by-commit
           - by-tag
+          - delete-commit
         default: by-commit
       commit_sha:
-        description: '[按提交] 要回滚到的提交 SHA（完整或短 SHA）'
+        description: '[按提交] 要回滚到的提交 SHA；[删除] 要删除的提交 SHA'
         required: false
         type: string
       target_tag:
@@ -20,8 +21,8 @@ on:
         required: false
         type: string
       target_branch:
-        description: '要回滚的目标分支'
-        required: true
+        description: '目标分支'
+        required: false
         type: string
         default: 'main'
       rollback_version:
@@ -35,8 +36,8 @@ on:
         type: string
         default: ''
       rollback_method:
-        description: '回滚执行方式'
-        required: true
+        description: '回滚执行方式（仅回滚模式有效）'
+        required: false
         type: choice
         options:
           - revert
@@ -48,7 +49,7 @@ on:
         type: boolean
         default: true
       create_release:
-        description: '创建 GitHub Release 记录'
+        description: '创建 GitHub Release 记录（仅标签回滚）'
         required: false
         type: choice
         options:
@@ -60,7 +61,7 @@ on:
         description: 'Dry-run 预览（不推送）'
         required: false
         type: boolean
-        default: false
+        default: false   # ← 默认不勾选
 
   schedule:
     # 每月 1 号 02:30 UTC（北京时间 10:30）
@@ -72,7 +73,7 @@ permissions:
 jobs:
   rollback:
     name: 执行版本回滚
-    if: github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'workflow_dispatch' && (github.event.inputs.rollback_type == 'by-commit' || github.event.inputs.rollback_type == 'by-tag')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -368,7 +369,7 @@ jobs:
           echo "=========================================="
 
       - name: Show rollback summary
-        if: ${{ github.event.inputs.dry_run != 'true' }}
+        if: ${{ github.event.inputs.dry_run != 'true' }}"
         run: |
           echo "=========================================="
           if [ "${{ steps.validate.outputs.needs_rollback }}" = "true" ]; then
@@ -396,6 +397,83 @@ jobs:
               echo ""
               echo "⚠️  工作流文件已保留在最新版本，不受回滚影响"
             fi
+          fi
+          echo "=========================================="
+
+  # ------------------------------------------------------------------
+  # 删除指定提交（rebase 跳过
+  # ------------------------------------------------------------------
+  delete-commit:
+    name: 删除指定提交
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.rollback_type == 'delete-commit'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT_WITH_WORKFLOW }}
+          fetch-depth: 0
+          ref: ${{ github.event.inputs.target_branch }}
+
+      - name: Configure Git
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Validate commit exists
+        id: validate
+        run: |
+          set -e
+          SHA="${{ github.event.inputs.commit_sha }}"
+          [ -z "$SHA" ] && { echo "❌ 请填写要删除的 commit_sha"; exit 1; }
+          FULL_SHA=$(git rev-parse --verify "$SHA^{commit}") || { echo "❌ 提交 $SHA 不存在"; exit 1; }
+          PARENT_SHA=$(git rev-parse "$FULL_SHA^") || { echo "❌ 无法获取父提交"; exit 1; }
+          echo "full_sha=$FULL_SHA" >> $GITHUB_OUTPUT
+          echo "parent_sha=$PARENT_SHA" >> $GITHUB_OUTPUT
+          echo "要删除的提交: $FULL_SHA"
+          echo "其父提交  : $PARENT_SHA"
+
+      - name: Dry-run preview
+        if: github.event.inputs.dry_run == 'true'
+        run: |
+          echo "=========================================="
+          echo "🔍 DRY-RUN 预览模式"
+          echo "=========================================="
+          echo "目标分支 : ${{ github.event.inputs.target_branch }}"
+          echo "将要删除 : ${{ steps.validate.outputs.full_sha }}"
+          echo "rebase 起点: ${{ steps.validate.outputs.parent_sha }}"
+          echo "=========================================="
+
+      - name: Delete commit via rebase（无编辑器）
+        if: github.event.inputs.dry_run != 'true'
+        run: |
+          set -e
+          PARENT="${{ steps.validate.outputs.parent_sha }}"
+          TARGET="${{ steps.validate.outputs.full_sha }}"
+
+          # 自动删除 TARGET 所在行
+          export GIT_SEQUENCE_EDITOR="sed -i '/^pick $TARGET/d'"
+          git rebase -i --onto "$PARENT" "$TARGET" "${{ github.event.inputs.target_branch }}" \
+            --empty=drop \
+            --strategy=recursive \
+            --strategy-option=theirs || {
+            echo "❌ rebase 冲突，请本地解决后手动推送"
+            exit 1
+          }
+
+      - name: Force-push rewritten history
+        if: github.event.inputs.dry_run != 'true'
+        run: |
+          git push --force-with-lease origin "${{ github.event.inputs.target_branch }}"
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "=========================================="
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            echo "✅ 干跑完成，未推送。再运行一次，dry_run 选 false 即可真正删除。"
+          else
+            echo "✅ 提交已被删除，历史已重写并强制推送。"
           fi
           echo "=========================================="
 
