@@ -1,0 +1,141 @@
+name: 🔄 版本发行系统
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_mode:
+        description: '版本更新模式'
+        required: true
+        type: choice
+        options:
+          - auto-patch
+          - auto-minor
+          - auto-major
+          - manual
+        default: auto-patch
+      manual_version:
+        description: '手动版本号 (仅当选择 manual 时使用，例如: v1.0.0)'
+        required: false
+        type: string
+        default: ''
+      release_title:
+        description: '发布标题'
+        required: false
+        type: string
+        default: ''
+      is_prerelease:
+        description: '是否为预发布版本?'
+        required: false
+        type: boolean
+        default: false
+      create_tag:
+        description: '是否创建 Git 标签?'
+        required: false
+        type: boolean
+        default: true
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine version tag
+        id: version
+        run: |
+          MODE="${{ github.event.inputs.version_mode }}"
+          if [ "$MODE" = "manual" ]; then
+            VERSION_TAG="${{ github.event.inputs.manual_version }}"
+            if [ -z "$VERSION_TAG" ]; then
+              echo "错误: 手动模式下必须提供版本号!"
+              exit 1
+            fi
+            if [[ ! "$VERSION_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9\.]+)?$ ]]; then
+              echo "错误: 版本标签格式不正确!"
+              exit 1
+            fi
+          else
+            LATEST_TAG=$(git tag --sort=-version:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -n 1)
+            if [ -z "$LATEST_TAG" ]; then
+              case "$MODE" in
+                auto-patch|auto-minor) VERSION_TAG="v0.1.0" ;;
+                auto-major)            VERSION_TAG="v1.0.0" ;;
+              esac
+            else
+              VERSION=${LATEST_TAG#v}
+              MAJOR=$(echo $VERSION | cut -d. -f1)
+              MINOR=$(echo $VERSION | cut -d. -f2)
+              PATCH=$(echo $VERSION | cut -d. -f3)
+              case "$MODE" in
+                auto-patch) PATCH=$((PATCH + 1)) ;;
+                auto-minor) MINOR=$((MINOR + 1)); PATCH=0 ;;
+                auto-major) MAJOR=$((MAJOR + 1)); MINOR=0; PATCH=0 ;;
+              esac
+              VERSION_TAG="v${MAJOR}.${MINOR}.${PATCH}"
+            fi
+          fi
+          echo "version_tag=$VERSION_TAG" >> $GITHUB_OUTPUT
+
+      - name: Check if tag already exists
+        run: |
+          if git rev-parse "${{ steps.version.outputs.version_tag }}" >/dev/null 2>&1; then
+            echo "错误: 标签 ${{ steps.version.outputs.version_tag }} 已存在!"
+            exit 1
+          fi
+
+      - name: Create Git tag
+        if: github.event.inputs.create_tag == 'true'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git tag -a "${{ steps.version.outputs.version_tag }}" -m "Release ${{ steps.version.outputs.version_tag }}"
+          git push origin "${{ steps.version.outputs.version_tag }}"
+
+      - name: Get Beijing time
+        id: time
+        run: |
+          BEIJING_TIME=$(TZ="Asia/Shanghai" date +'%Y-%m-%d %H:%M:%S')
+          echo "beijing_time=$BEIJING_TIME" >> $GITHUB_OUTPUT
+
+      - name: Generate minimal changelog with latest commit only
+        run: |
+          LATEST_COMMIT=$(git log -1 --pretty="format:* %s (%h)")
+          echo "## ${{ steps.version.outputs.version_tag }}" > CHANGELOG.md
+          echo "" >> CHANGELOG.md
+          echo "**发布日期：** ${{ steps.time.outputs.beijing_time }}" >> CHANGELOG.md
+          echo "" >> CHANGELOG.md
+          echo "### 最新提交" >> CHANGELOG.md
+          echo "$LATEST_COMMIT" >> CHANGELOG.md
+
+      - name: Determine release title
+        id: release_title
+        run: |
+          TITLE="${{ github.event.inputs.release_title }}"
+          if [ -z "$TITLE" ]; then
+            TITLE="Release ${{ steps.version.outputs.version_tag }}"
+          fi
+          echo "title=$TITLE" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.version_tag }}
+          name: ${{ steps.release_title.outputs.title }}
+          body_path: CHANGELOG.md
+          files: CHANGELOG.md
+          prerelease: ${{ github.event.inputs.is_prerelease }}
+          generate_release_notes: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_WITH_WORKFLOW }}
+
+      - name: Show release details
+        run: |
+          echo "发布已成功创建!"
+          echo "版本: ${{ steps.version.outputs.version_tag }}"
+          echo "标题: ${{ steps.release_title.outputs.title }}"
+          echo "预发布: ${{ github.event.inputs.is_prerelease }}"
+          echo "北京时间: ${{ steps.time.outputs.beijing_time }}"
