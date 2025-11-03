@@ -1,0 +1,43 @@
+{
+  "title": "my 合集",
+  "description": "自用",
+  "icon": "https://for-ward.vercel.app/icon/icon.PNG",
+  "widgets": [
+    {
+      "id": "_____0",
+      "title": "影视榜单",
+      "description": "影视动画榜单",
+      "requiredVersion": "0.0.2",
+      "version": "1.3.9",
+      "author": "𝓑𝓾𝓽𝓽𝓮𝓻𝓯𝓵𝔂",
+      "url": "https://for-ward.vercel.app/Widgets/combined.js"
+    },
+    {
+      "id": "_____________5",
+      "title": "豆瓣我看&豆瓣个性化推荐",
+      "description": "解析豆瓣想看、在看、已看以及根据个人数据生成的个性化推荐【30% off code：CHEAP】",
+      "requiredVersion": "0.0.1",
+      "version": "1.0.20",
+      "author": "huangxd",
+      "url": "https://for-ward.vercel.app/Widgets/douban.js"
+    },
+    {
+      "id": "__________________________7",
+      "title": "追剧日历(今/明日播出、周历、各项榜单、今日推荐)",
+      "description": "解析追剧日历今/明日播出剧集/番剧/国漫/综艺、周历、各项榜单、今日推荐等【30% off code：CHEAP】",
+      "requiredVersion": "0.0.1",
+      "version": "1.0.4",
+      "author": "huangxd",
+      "url": "https://for-ward.vercel.app/Widgets/zhuijurili.js"
+    },
+    {
+      "id": "_____10",
+      "title": "热门精选",
+      "description": "获取最新热播剧和热门影片推荐",
+      "requiredVersion": "0.0.1",
+      "version": "1.1.9",
+      "author": "两块",
+      "url": "https://for-ward.vercel.app/Widgets/HotPicks.js"
+    }
+  ]
+}
