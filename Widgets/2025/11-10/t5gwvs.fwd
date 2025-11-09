@@ -1,0 +1,196 @@
+{
+  "title": "My STB",
+  "description": "M & S",
+  "icon": "https://for-ward.vercel.app/icon/icon.PNG",
+  "widgets": [
+    {
+      "id": "film_and_television_rankings_0",
+      "title": "Film and television rankings",
+      "description": "Film and Animation Rankings",
+      "requiredVersion": "0.0.2",
+      "version": "1.3.9",
+      "author": "𝓑𝓾𝓽𝓽𝓮𝓻𝓯𝓵𝔂",
+      "url": "https://for-ward.vercel.app/Widgets/combined.js"
+    },
+    {
+      "id": "general_bullet_screen_1",
+      "title": "General bullet screen",
+      "description": "A universal bullet screen plugin that supports platforms such as Tencent Video, Youku, iQiyi, Bilibili, and Renren Video.",
+      "requiredVersion": "0.0.2",
+      "version": "0.10.1",
+      "author": "Learn",
+      "url": "https://for-ward.vercel.app/Widgets/danmu_universe.js"
+    },
+    {
+      "id": "automatic_linking_of_bullet_comments_v2_2",
+      "title": "Automatic linking of bullet comments v2",
+      "description": "Automatically retrieve playback links and get bullet comments from the server [30% off code: CHEAP]",
+      "requiredVersion": "0.0.2",
+      "version": "2.0.10",
+      "author": "huangxd",
+      "url": "https://for-ward.vercel.app/Widgets/danmu_auto.js"
+    },
+    {
+      "id": "danmu_api_bullet_comments_3",
+      "title": "danmu_api bullet comments",
+      "description": "Get bullet comments from danmu_api [50% off code: CHEAP.5; 70% off code: CHEAP]",
+      "requiredVersion": "0.0.2",
+      "version": "1.0.3",
+      "author": "huangxd",
+      "url": "https://for-ward.vercel.app/Widgets/danmu_api.js"
+    },
+    {
+      "id": "movie___tv_lists_4",
+      "title": "Movie & TV Lists",
+      "description": "Movie & TV Lists",
+      "requiredVersion": "0.0.2",
+      "version": "1.0.0",
+      "author": "𝓑𝓾𝓽𝓽𝓮𝓻𝓯𝓵𝔂",
+      "url": "https://for-ward.vercel.app/Widgets/Move_list_EN.js"
+    },
+    {
+      "id": "douban_my_views___douban_personalized_recommendations_5",
+      "title": "Douban My Views & Douban Personalized Recommendations",
+      "description": "Analyze Douban's \"Want to Watch,\" \"Watching,\" and \"Watched\" lists, as well as personalized recommendations generated based on your personal data. [30% off code: CHEAP]",
+      "requiredVersion": "0.0.1",
+      "version": "1.0.20",
+      "author": "huangxd",
+      "url": "https://for-ward.vercel.app/Widgets/douban.js"
+    },
+    {
+      "id": "trakt_view___trakt_personalized_recommendations_6",
+      "title": "Trakt View & Trakt Personalized Recommendations",
+      "description": "Analyze Trakt's \"Want to Watch,\" \"Watching,\" \"Watched,\" \"Watchlist,\" \"Watching Calendar,\" and personalized recommendations based on your personal data. [30% off code: CHEAP]",
+      "requiredVersion": "0.0.1",
+      "version": "1.0.15",
+      "author": "huangxd",
+      "url": "https://for-ward.vercel.app/Widgets/trakt.js"
+    },
+    {
+      "id": "tv_series_watching_calendar__today_tomorrow_s_airing_schedule__weekly_calendar__various_rankings__today_s_recommendations__7",
+      "title": "TV Series Watching Calendar (Today/Tomorrow's Airing Schedule, Weekly Calendar, Various Rankings, Today's Recommendations)",
+      "description": "Analysis of the TV series viewing calendar: today's/tomorrow's airing dramas/anime/Chinese animation/variety shows, weekly calendar, various rankings, today's recommendations, etc. [30% off code: CHEAP]",
+      "requiredVersion": "0.0.1",
+      "version": "1.0.4",
+      "author": "huangxd",
+      "url": "https://for-ward.vercel.app/Widgets/zhuijurili.js"
+    },
+    {
+      "id": "yatu__daily_broadcast___on_demand_ranking___rating_ranking__8",
+      "title": "Yatu (Daily Broadcast + On-Demand Ranking + Rating Ranking)",
+      "description": "Analysis of Yatu's daily broadcast updates and various leaderboards [30% off code: CHEAP]",
+      "requiredVersion": "0.0.1",
+      "version": "1.0.6",
+      "author": "huangxd",
+      "url": "https://for-ward.vercel.app/Widgets/yatu.js"
+    },
+    {
+      "id": "letterboxd__a_platform_for_movie_lovers_9",
+      "title": "Letterboxd, a platform for movie lovers",
+      "description": "Analyze the movies in the Letterbox playlist [30% off code: CHEAP]",
+      "requiredVersion": "0.0.1",
+      "version": "1.0.2",
+      "author": "huangxd",
+      "url": "https://for-ward.vercel.app/Widgets/letterboxd.js"
+    },
+    {
+      "id": "popular_picks_10",
+      "title": "Popular Picks",
+      "description": "Get the latest trending TV dramas and popular movie recommendations",
+      "requiredVersion": "0.0.1",
+      "version": "1.2.1",
+      "author": "Two pieces",
+      "url": "https://for-ward.vercel.app/Widgets/HotPicks.js"
+    },
+    {
+      "id": "bangumi_hot_list_11",
+      "title": "Bangumi Hot List",
+      "description": "Get recent trending and daily broadcast data from Bangumi, and support list filtering.",
+      "requiredVersion": "0.0.1",
+      "version": "2.0.0",
+      "author": "Autism",
+      "url": "https://for-ward.vercel.app/Widgets/Bangumi_v2.0.0.js"
+    },
+    {
+      "id": "_____wallpaper_12",
+      "title": "🖼️ ✨wallpaper",
+      "description": "✨ Dynamic wallpaper For Topshelf",
+      "requiredVersion": "0.0.1",
+      "version": "2.3.0",
+      "author": "🎁 Discount Code: VOICES",
+      "url": "https://for-ward.vercel.app/Widgets/wallpaper.js"
+    },
+    {
+      "id": "tmdb_character_film_and_television_works_13",
+      "title": "TMDB Character Film and Television Works",
+      "description": "Get TMDB leaderboard data",
+      "requiredVersion": "0.0.1",
+      "version": "1.0.4",
+      "author": "Evan",
+      "url": "https://for-ward.vercel.app/Widgets/person_movie.js"
+    },
+    {
+      "id": "tv_station_14",
+      "title": "TV station",
+      "description": "Get popular live TV channels",
+      "requiredVersion": "0.0.1",
+      "version": "1.1.6",
+      "author": "Two pieces",
+      "url": "https://for-ward.vercel.app/Widgets/TvLive.js"
+    },
+    {
+      "id": "live_broadcast__tv___internet__15",
+      "title": "Live broadcast (TV + Internet)",
+      "description": "Disassemble the live stream subscription link [30% off code: CHEAP]",
+      "requiredVersion": "0.0.1",
+      "version": "1.0.10",
+      "author": "huangxd",
+      "url": "https://for-ward.vercel.app/Widgets/live.js"
+    },
+    {
+      "id": "vod_16",
+      "title": "VOD",
+      "description": "Get VOD movie data",
+      "requiredVersion": "0.0.1",
+      "version": "1.1.0",
+      "author": "Of",
+      "url": "https://for-ward.vercel.app/Widgets/vod.js"
+    },
+    {
+      "id": "vod_17",
+      "title": "VOD",
+      "description": "Based on the keyword, it is used for VOD.",
+      "requiredVersion": "0.0.1",
+      "version": "1.0.0",
+      "author": "nameless",
+      "url": "https://for-ward.vercel.app/Widgets/wuming.js"
+    },
+    {
+      "id": "xtream_api_live_18",
+      "title": "Xtream API Live",
+      "description": "Fetch live channels via official Xtream-Codes REST API with keyword search",
+      "requiredVersion": "0.0.1",
+      "version": "2.1.2",
+      "author": "🎁 Discount Code: VOICES",
+      "url": "https://for-ward.vercel.app/Widgets/xtream_api_en.js"
+    },
+    {
+      "id": "vod___live_portal_19",
+      "title": "VOD & Live Portal",
+      "description": "Loads Movies, Series, & Live TV from an Xtream Codes VOD portal.",
+      "requiredVersion": "0.0.1",
+      "version": "1.2.2",
+      "author": "Dex",
+      "url": "https://for-ward.vercel.app/Widgets/VODLivePortal.js"
+    },
+    {
+      "id": "podcast_20",
+      "title": "Podcast",
+      "description": "Get RSS podcast data",
+      "requiredVersion": "0.0.1",
+      "version": "2.1.0",
+      "author": "Of",
+      "url": "https://for-ward.vercel.app/Widgets/podcast.js"
+    }
+  ]
+}
