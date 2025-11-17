@@ -1,0 +1,43 @@
+{
+  "title": "我的合集",
+  "description": "自用合集",
+  "icon": "https://for-ward.vercel.app/icon/icon.PNG",
+  "widgets": [
+    {
+      "id": "pornhub_20",
+      "title": "Pornhub",
+      "description": "在线观看Pornhub",
+      "requiredVersion": "0.0.1",
+      "version": "1.0.5",
+      "author": "海带",
+      "url": "https://for-ward.vercel.app/Widgets/ph.js"
+    },
+    {
+      "id": "91porn_19",
+      "title": "91Porn",
+      "description": "🔞 91Porn 视频搜索",
+      "requiredVersion": "0.0.1",
+      "version": "0.10.1",
+      "author": "匿名",
+      "url": "https://for-ward.vercel.app/Widgets/91porn.js"
+    },
+    {
+      "id": "jable_18",
+      "title": "Jable",
+      "description": "获取 Jable 视频",
+      "requiredVersion": "0.0.2",
+      "version": "1.0.9",
+      "author": "𝓑𝓾𝓽𝓽𝓮𝓻𝓯𝓵𝔂",
+      "url": "https://for-ward.vercel.app/Widgets/Jable.js"
+    },
+    {
+      "id": "missav_17",
+      "title": "MissAV",
+      "description": "获取 MissAV 推荐",
+      "requiredVersion": "0.0.2",
+      "version": "1.0.0",
+      "author": "𝓑𝓾𝓽𝓽𝓮𝓻𝓯𝓵𝔂",
+      "url": "https://for-ward.vercel.app/Widgets/MissAV.js"
+    }
+  ]
+}
