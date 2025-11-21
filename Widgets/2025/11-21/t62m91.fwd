@@ -1,0 +1,25 @@
+{
+  "title": "danmu",
+  "description": "danmu",
+  "icon": "https://for-ward.vercel.app/icon/icon.PNG",
+  "widgets": [
+    {
+      "id": "_____1",
+      "title": "通用弹幕",
+      "description": "通用弹幕插件，支持腾讯、优酷、爱奇艺、哔哩哔哩、人人视频等平台",
+      "requiredVersion": "0.0.2",
+      "version": "0.10.1",
+      "author": "Baran",
+      "url": "https://for-ward.vercel.app/Widgets/danmu_universe.js"
+    },
+    {
+      "id": "danmu_api___3",
+      "title": "danmu_api弹幕",
+      "description": "从danmu_api获取弹幕【五折码：CHEAP.5;七折码：CHEAP】",
+      "requiredVersion": "0.0.2",
+      "version": "1.0.3",
+      "author": "huangxd",
+      "url": "https://for-ward.vercel.app/Widgets/danmu_api.js"
+    }
+  ]
+}
