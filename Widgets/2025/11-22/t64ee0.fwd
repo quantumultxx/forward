@@ -1,0 +1,79 @@
+{
+  "title": "我的合集",
+  "description": "自用合集",
+  "icon": "https://for-ward.vercel.app/icon/icon.PNG",
+  "widgets": [
+    {
+      "id": "_____1",
+      "title": "通用弹幕",
+      "description": "通用弹幕插件，支持腾讯、优酷、爱奇艺、哔哩哔哩、人人视频等平台",
+      "requiredVersion": "0.0.2",
+      "version": "0.10.1",
+      "author": "Baran",
+      "url": "https://for-ward.vercel.app/Widgets/danmu_universe.js"
+    },
+    {
+      "id": "______v2_2",
+      "title": "自动链接弹幕v2",
+      "description": "自动获取播放链接并从服务器获取弹幕【30% off code：CHEAP】",
+      "requiredVersion": "0.0.2",
+      "version": "2.0.10",
+      "author": "huangxd",
+      "url": "https://for-ward.vercel.app/Widgets/danmu_auto.js"
+    },
+    {
+      "id": "danmu_api___3",
+      "title": "danmu_api弹幕",
+      "description": "从danmu_api获取弹幕【五折码：CHEAP.5;七折码：CHEAP】",
+      "requiredVersion": "0.0.2",
+      "version": "1.0.3",
+      "author": "huangxd",
+      "url": "https://for-ward.vercel.app/Widgets/danmu_api.js"
+    },
+    {
+      "id": "_____________5",
+      "title": "豆瓣我看&豆瓣个性化推荐",
+      "description": "解析豆瓣想看、在看、已看以及根据个人数据生成的个性化推荐【30% off code：CHEAP】",
+      "requiredVersion": "0.0.1",
+      "version": "1.0.20",
+      "author": "huangxd",
+      "url": "https://for-ward.vercel.app/Widgets/douban.js"
+    },
+    {
+      "id": "trakt___trakt______6",
+      "title": "Trakt我看&Trakt个性化推荐",
+      "description": "解析Trakt想看、在看、已看、片单、追剧日历以及根据个人数据生成的个性化推荐【30% off code：CHEAP】",
+      "requiredVersion": "0.0.1",
+      "version": "1.0.15",
+      "author": "huangxd",
+      "url": "https://for-ward.vercel.app/Widgets/trakt.js"
+    },
+    {
+      "id": "__________________________7",
+      "title": "追剧日历(今/明日播出、周历、各项榜单、今日推荐)",
+      "description": "解析追剧日历今/明日播出剧集/番剧/国漫/综艺、周历、各项榜单、今日推荐等【30% off code：CHEAP】",
+      "requiredVersion": "0.0.1",
+      "version": "1.0.4",
+      "author": "huangxd",
+      "url": "https://for-ward.vercel.app/Widgets/zhuijurili.js"
+    },
+    {
+      "id": "_____________________8",
+      "title": "雅图(每日放送+点播排行榜+评分排行榜)",
+      "description": "解析雅图每日放送更新以及各类排行榜【30% off code：CHEAP】",
+      "requiredVersion": "0.0.1",
+      "version": "1.0.6",
+      "author": "huangxd",
+      "url": "https://for-ward.vercel.app/Widgets/yatu.js"
+    },
+    {
+      "id": "letterboxd________9",
+      "title": "Letterboxd电影爱好者平台",
+      "description": "解析Letterboxd片单内的影片【30% off code：CHEAP】",
+      "requiredVersion": "0.0.1",
+      "version": "1.0.2",
+      "author": "huangxd",
+      "url": "https://for-ward.vercel.app/Widgets/letterboxd.js"
+    }
+  ]
+}
