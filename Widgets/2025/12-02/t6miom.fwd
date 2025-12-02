@@ -1,0 +1,25 @@
+{
+  "title": "vod",
+  "description": "vod",
+  "icon": "https://22.com.png",
+  "widgets": [
+    {
+      "id": "vod_15",
+      "title": "VOD",
+      "description": "获取 VOD 影视数据",
+      "requiredVersion": "0.0.1",
+      "version": "1.1.0",
+      "author": "Ti",
+      "url": "https://for-ward.vercel.app/Widgets/vod.js"
+    },
+    {
+      "id": "vod_16",
+      "title": "VOD",
+      "description": "根据Keyword,用于VOD",
+      "requiredVersion": "0.0.1",
+      "version": "1.0.0",
+      "author": "无名",
+      "url": "https://for-ward.vercel.app/Widgets/wuming.js"
+    }
+  ]
+}
