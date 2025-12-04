@@ -1,0 +1,106 @@
+{
+  "title": "0xAKi",
+  "description": "自用合集",
+  "icon": "https://for-ward.vercel.app/icon/icon.PNG",
+  "widgets": [
+    {
+      "id": "xvideos_23",
+      "title": "XVideos",
+      "description": "Xvideos",
+      "requiredVersion": "0.0.1",
+      "version": "0.9.4",
+      "author": "匿名",
+      "url": "https://for-ward.vercel.app/Widgets/xvideos.js"
+    },
+    {
+      "id": "javday_22",
+      "title": "JAVDay",
+      "description": "获取 JAVDay 推荐",
+      "requiredVersion": "0.0.2",
+      "version": "1.1.0",
+      "author": "𝓑𝓾𝓽𝓽𝓮𝓻𝓯𝓵𝔂",
+      "url": "https://for-ward.vercel.app/Widgets/Javday.js"
+    },
+    {
+      "id": "pornhub_21",
+      "title": "Pornhub",
+      "description": "在线观看Pornhub",
+      "requiredVersion": "0.0.1",
+      "version": "1.0.5",
+      "author": "海带",
+      "url": "https://for-ward.vercel.app/Widgets/ph.js"
+    },
+    {
+      "id": "91porn_20",
+      "title": "91Porn",
+      "description": "🔞 91Porn 视频搜索",
+      "requiredVersion": "0.0.1",
+      "version": "0.10.2",
+      "author": "匿名",
+      "url": "https://for-ward.vercel.app/Widgets/91porn.js"
+    },
+    {
+      "id": "jable_19",
+      "title": "Jable",
+      "description": "获取 Jable 视频",
+      "requiredVersion": "0.0.2",
+      "version": "1.0.9",
+      "author": "𝓑𝓾𝓽𝓽𝓮𝓻𝓯𝓵𝔂",
+      "url": "https://for-ward.vercel.app/Widgets/Jable.js"
+    },
+    {
+      "id": "missav_18",
+      "title": "MissAV",
+      "description": "获取 MissAV 推荐",
+      "requiredVersion": "0.0.2",
+      "version": "1.0.0",
+      "author": "𝓑𝓾𝓽𝓽𝓮𝓻𝓯𝓵𝔂",
+      "url": "https://for-ward.vercel.app/Widgets/MissAV.js"
+    },
+    {
+      "id": "vod_stream_13",
+      "title": "VOD Stream",
+      "description": "聚合VOD资源",
+      "requiredVersion": "0.0.1",
+      "version": "1.0.2",
+      "author": "两块",
+      "url": "https://for-ward.vercel.app/Widgets/VodStream.js"
+    },
+    {
+      "id": "_____1",
+      "title": "通用弹幕",
+      "description": "通用弹幕插件，支持腾讯、优酷、爱奇艺、哔哩哔哩、人人视频等平台",
+      "requiredVersion": "0.0.2",
+      "version": "0.13.2",
+      "author": "Baran",
+      "url": "https://for-ward.vercel.app/Widgets/danmu_universe.js"
+    },
+    {
+      "id": "______v2_2",
+      "title": "自动链接弹幕v2",
+      "description": "自动获取播放链接并从服务器获取弹幕【30% off code：CHEAP】",
+      "requiredVersion": "0.0.2",
+      "version": "2.0.10",
+      "author": "huangxd",
+      "url": "https://for-ward.vercel.app/Widgets/danmu_auto.js"
+    },
+    {
+      "id": "danmu_api___3",
+      "title": "danmu_api弹幕",
+      "description": "从danmu_api获取弹幕【五折码：CHEAP.5;七折码：CHEAP】",
+      "requiredVersion": "0.0.2",
+      "version": "1.0.3",
+      "author": "huangxd",
+      "url": "https://for-ward.vercel.app/Widgets/danmu_api.js"
+    },
+    {
+      "id": "_____0",
+      "title": "影视榜单",
+      "description": "影视动画榜单",
+      "requiredVersion": "0.0.2",
+      "version": "1.5.0",
+      "author": "𝓑𝓾𝓽𝓽𝓮𝓻𝓯𝓵𝔂",
+      "url": "https://for-ward.vercel.app/Widgets/combined.js"
+    }
+  ]
+}
