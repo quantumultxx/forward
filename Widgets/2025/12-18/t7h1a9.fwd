@@ -1,0 +1,106 @@
+{
+  "title": "我的合集",
+  "description": "自定义",
+  "icon": "https://for-ward.vercel.app/icon/icon.PNG",
+  "widgets": [
+    {
+      "id": "vod_17",
+      "title": "VOD",
+      "description": "根据Keyword,用于VOD",
+      "requiredVersion": "0.0.1",
+      "version": "1.0.0",
+      "author": "无名",
+      "url": "https://for-ward.vercel.app/Widgets/wuming.js"
+    },
+    {
+      "id": "vod_16",
+      "title": "VOD",
+      "description": "获取 VOD 影视数据",
+      "requiredVersion": "0.0.1",
+      "version": "1.1.0",
+      "author": "Ti",
+      "url": "https://for-ward.vercel.app/Widgets/vod.js"
+    },
+    {
+      "id": "missav_18",
+      "title": "MissAV",
+      "description": "获取 MissAV 推荐",
+      "requiredVersion": "0.0.2",
+      "version": "1.0.0",
+      "author": "𝓑𝓾𝓽𝓽𝓮𝓻𝓯𝓵𝔂",
+      "url": "https://for-ward.vercel.app/Widgets/MissAV.js"
+    },
+    {
+      "id": "hanime1_19",
+      "title": "Hanime1",
+      "description": "获取 Hanime1 动画，折扣码gold",
+      "requiredVersion": "0.0.2",
+      "version": "2.1.1",
+      "author": "gr294949",
+      "url": "https://for-ward.vercel.app/Widgets/hanime1.js"
+    },
+    {
+      "id": "91porn_21",
+      "title": "91Porn",
+      "description": "🔞 91Porn 视频搜索",
+      "requiredVersion": "0.0.1",
+      "version": "0.10.2",
+      "author": "匿名",
+      "url": "https://for-ward.vercel.app/Widgets/91porn.js"
+    },
+    {
+      "id": "pornhub_22",
+      "title": "Pornhub",
+      "description": "在线观看Pornhub",
+      "requiredVersion": "0.0.1",
+      "version": "1.0.5",
+      "author": "海带",
+      "url": "https://for-ward.vercel.app/Widgets/ph.js"
+    },
+    {
+      "id": "javday_23",
+      "title": "JAVDay",
+      "description": "获取 JAVDay 推荐",
+      "requiredVersion": "0.0.2",
+      "version": "1.1.0",
+      "author": "𝓑𝓾𝓽𝓽𝓮𝓻𝓯𝓵𝔂",
+      "url": "https://for-ward.vercel.app/Widgets/Javday.js"
+    },
+    {
+      "id": "xvideos_24",
+      "title": "XVideos",
+      "description": "Xvideos",
+      "requiredVersion": "0.0.1",
+      "version": "0.9.4",
+      "author": "匿名",
+      "url": "https://for-ward.vercel.app/Widgets/xvideos.js"
+    },
+    {
+      "id": "vod_stream_13",
+      "title": "VOD Stream",
+      "description": "聚合VOD资源",
+      "requiredVersion": "0.0.1",
+      "version": "1.1.4",
+      "author": "两块",
+      "url": "https://for-ward.vercel.app/Widgets/VodStream.js"
+    },
+    {
+      "id": "____14",
+      "title": "电视台",
+      "description": "获取热门电视直播频道",
+      "requiredVersion": "0.0.1",
+      "version": "1.1.6",
+      "author": "两块",
+      "url": "https://for-ward.vercel.app/Widgets/TvLive.js"
+    },
+    {
+      "id": "__________15",
+      "title": "直播(电视+网络)",
+      "description": "解析直播订阅链接【30% off code：CHEAP】",
+      "requiredVersion": "0.0.1",
+      "version": "1.0.10",
+      "author": "huangxd",
+      "url": "https://for-ward.vercel.app/Widgets/live.js"
+    }
+  ]
+}
