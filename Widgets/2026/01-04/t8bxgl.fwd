@@ -1,0 +1,52 @@
+{
+  "title": "瑟瑟合集",
+  "description": "自用",
+  "icon": "https://for-ward.vercel.app/icon/icon.PNG",
+  "widgets": [
+    {
+      "id": "91porn_23",
+      "title": "91Porn",
+      "description": "🔞 91Porn 视频搜索",
+      "requiredVersion": "0.0.1",
+      "version": "0.10.2",
+      "author": "匿名",
+      "url": "https://for-ward.vercel.app/Widgets/91porn.js"
+    },
+    {
+      "id": "pornhub_24",
+      "title": "Pornhub",
+      "description": "在线观看Pornhub",
+      "requiredVersion": "0.0.1",
+      "version": "1.0.5",
+      "author": "海带",
+      "url": "https://for-ward.vercel.app/Widgets/ph.js"
+    },
+    {
+      "id": "javday_25",
+      "title": "JAVDay",
+      "description": "获取 JAVDay 推荐",
+      "requiredVersion": "0.0.2",
+      "version": "1.1.0",
+      "author": "𝓑𝓾𝓽𝓽𝓮𝓻𝓯𝓵𝔂",
+      "url": "https://for-ward.vercel.app/Widgets/Javday.js"
+    },
+    {
+      "id": "xvideos_26",
+      "title": "XVideos",
+      "description": "Xvideos",
+      "requiredVersion": "0.0.1",
+      "version": "0.9.4",
+      "author": "匿名",
+      "url": "https://for-ward.vercel.app/Widgets/xvideos.js"
+    },
+    {
+      "id": "jable_22",
+      "title": "Jable",
+      "description": "获取 Jable 视频",
+      "requiredVersion": "0.0.2",
+      "version": "1.0.9",
+      "author": "𝓑𝓾𝓽𝓽𝓮𝓻𝓯𝓵𝔂",
+      "url": "https://for-ward.vercel.app/Widgets/Jable.js"
+    }
+  ]
+}
