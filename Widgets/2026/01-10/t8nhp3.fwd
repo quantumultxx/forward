@@ -1,0 +1,106 @@
+{
+  "title": "我的合集",
+  "description": "自用合集",
+  "icon": "https://for-ward.vercel.app/icon/icon.PNG",
+  "widgets": [
+    {
+      "id": "_____0",
+      "title": "影视榜单",
+      "description": "影视动画榜单",
+      "requiredVersion": "0.0.2",
+      "version": "1.5.0",
+      "author": "𝓑𝓾𝓽𝓽𝓮𝓻𝓯𝓵𝔂",
+      "url": "https://for-ward.vercel.app/Widgets/combined.js"
+    },
+    {
+      "id": "_____________5",
+      "title": "豆瓣我看&豆瓣个性化推荐",
+      "description": "解析豆瓣想看、在看、已看以及根据个人数据生成的个性化推荐【30% off code：CHEAP】",
+      "requiredVersion": "0.0.1",
+      "version": "1.0.20",
+      "author": "huangxd",
+      "url": "https://for-ward.vercel.app/Widgets/douban.js"
+    },
+    {
+      "id": "trakt___trakt______6",
+      "title": "Trakt我看&Trakt个性化推荐",
+      "description": "解析Trakt想看、在看、已看、片单、追剧日历以及根据个人数据生成的个性化推荐【30% off code：CHEAP】",
+      "requiredVersion": "0.0.1",
+      "version": "1.0.15",
+      "author": "huangxd",
+      "url": "https://for-ward.vercel.app/Widgets/trakt.js"
+    },
+    {
+      "id": "__________________________7",
+      "title": "追剧日历(今/明日播出、周历、各项榜单、今日推荐)",
+      "description": "解析追剧日历今/明日播出剧集/番剧/国漫/综艺、周历、各项榜单、今日推荐等【30% off code：CHEAP】",
+      "requiredVersion": "0.0.1",
+      "version": "1.0.4",
+      "author": "huangxd",
+      "url": "https://for-ward.vercel.app/Widgets/zhuijurili.js"
+    },
+    {
+      "id": "_____________________8",
+      "title": "雅图(每日放送+点播排行榜+评分排行榜)",
+      "description": "解析雅图每日放送更新以及各类排行榜【30% off code：CHEAP】",
+      "requiredVersion": "0.0.1",
+      "version": "1.0.6",
+      "author": "huangxd",
+      "url": "https://for-ward.vercel.app/Widgets/yatu.js"
+    },
+    {
+      "id": "letterboxd________9",
+      "title": "Letterboxd电影爱好者平台",
+      "description": "解析Letterboxd片单内的影片【30% off code：CHEAP】",
+      "requiredVersion": "0.0.1",
+      "version": "1.0.2",
+      "author": "huangxd",
+      "url": "https://for-ward.vercel.app/Widgets/letterboxd.js"
+    },
+    {
+      "id": "_____10",
+      "title": "热门精选",
+      "description": "获取最新热播剧和热门影片推荐",
+      "requiredVersion": "0.0.1",
+      "version": "1.2.1",
+      "author": "两块",
+      "url": "https://for-ward.vercel.app/Widgets/HotPicks.js"
+    },
+    {
+      "id": "bangumi______11",
+      "title": "Bangumi 热门榜单",
+      "description": "获取Bangumi近期热门、每日放送数据，支持榜单筛选。",
+      "requiredVersion": "0.0.1",
+      "version": "2.0.0",
+      "author": "Autism",
+      "url": "https://for-ward.vercel.app/Widgets/Bangumi_v2.0.0.js"
+    },
+    {
+      "id": "tmdb_______12",
+      "title": "TMDB人物影视作品",
+      "description": "获取 TMDB 的榜单数据",
+      "requiredVersion": "0.0.1",
+      "version": "1.0.4",
+      "author": "Evan",
+      "url": "https://for-ward.vercel.app/Widgets/person_movie.js"
+    },
+    {
+      "id": "vod_18",
+      "title": "VOD",
+      "description": "获取 VOD 影视数据",
+      "requiredVersion": "0.0.1",
+      "version": "1.1.0",
+      "author": "Ti",
+      "url": "https://for-ward.vercel.app/Widgets/vod.js"
+    },
+    {
+      "id": "vod_19",
+      "title": "VOD",
+      "description": "根据Keyword,用于VOD",
+      "requiredVersion": "0.0.1",
+      "version": "1.0.0",
+      "author": "无名",
+      "url": "https://for-ward.vercel.app/Widgets/wuming.js"
+    }
+  ]
+}
