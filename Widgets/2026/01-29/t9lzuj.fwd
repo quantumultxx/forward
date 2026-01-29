@@ -1,0 +1,43 @@
+{
+  "title": "弹幕",
+  "description": "看弹幕，享受人生",
+  "icon": "https://for-ward.vercel.app/icon/icon.PNG",
+  "widgets": [
+    {
+      "id": "_____1",
+      "title": "通用弹幕",
+      "description": "通用弹幕插件，支持腾讯、优酷、爱奇艺、哔哩哔哩、人人视频等平台",
+      "requiredVersion": "0.0.2",
+      "version": "0.14.3",
+      "author": "Baran",
+      "url": "https://for-ward.vercel.app/Widgets/danmu_universe.js"
+    },
+    {
+      "id": "______v2_2",
+      "title": "自动链接弹幕v2",
+      "description": "自动获取播放链接并从服务器获取弹幕【30% off code：CHEAP】",
+      "requiredVersion": "0.0.2",
+      "version": "1.13.2",
+      "author": "huangxd",
+      "url": "https://for-ward.vercel.app/Widgets/danmu_auto.js"
+    },
+    {
+      "id": "danmu_api___3",
+      "title": "danmu_api弹幕",
+      "description": "从danmu_api获取弹幕【五折码：CHEAP.5;七折码：CHEAP】",
+      "requiredVersion": "0.0.2",
+      "version": "1.0.3",
+      "author": "huangxd",
+      "url": "https://for-ward.vercel.app/Widgets/danmu_api.js"
+    },
+    {
+      "id": "_____28",
+      "title": "多源弹幕",
+      "description": "支持添加多条api并自命名&繁简互转",
+      "requiredVersion": "0.0.2",
+      "version": "1.0.8",
+      "author": "𝙈𝙖𝙠𝙠𝙖𝙋𝙖𝙠𝙠𝙖",
+      "url": "https://raw.githubusercontent.com/MakkaPakka518/ForwardWidgets/refs/heads/main/widgets/danmuapi-Pro.js"
+    }
+  ]
+}
